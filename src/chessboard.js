@@ -2,26 +2,26 @@ import './chessboard.css';
 
 function Chessboard(){
     return (
-        <table className="chessboard">
-            <tr className="chessboard" id="8">
-                <td className="chessboard" id="a8"><span>a8</span><img src="assets\rookBlack.png" /></td>
-                <td className="chessboard" id="b8"><span>b8</span><img src="assets\knightBlack.png" /></td>
-                <td className="chessboard" id="c8"><span>c8</span><img src="assets\bishopBlack.png" /></td>
-                <td className="chessboard" id="d8"><span>d8</span><img src="assets\queenBlack.png" /></td>
-                <td className="chessboard" id="e8"><span>e8</span><img src="assets\kingBlack.png" /></td>
-                <td className="chessboard" id="f8"><span>f8</span><img src="assets\bishopBlack.png" /></td>
-                <td className="chessboard" id="g8"><span>g8</span><img src="assets\knightBlack.png" /></td>
-                <td className="chessboard" id="h8"><span>h8</span><img src="assets\rookBlack.png" /></td>
+        <table class="chessboard">
+            <tr class="chessboard" id="8">
+                <td class="chessboard" id="a8"><span>a8</span><img src="assets\rookBlack.png" /></td>
+                <td class="chessboard" id="b8"><span>b8</span><img src="assets\knightBlack.png" /></td>
+                <td class="chessboard" id="c8"><span>c8</span><img src="assets\bishopBlack.png" /></td>
+                <td class="chessboard" id="d8"><span>d8</span><img src="assets\queenBlack.png" /></td>
+                <td class="chessboard" id="e8"><span>e8</span><img src="assets\kingBlack.png" /></td>
+                <td class="chessboard" id="f8"><span>f8</span><img src="assets\bishopBlack.png" /></td>
+                <td class="chessboard" id="g8"><span>g8</span><img src="assets\knightBlack.png" /></td>
+                <td class="chessboard" id="h8"><span>h8</span><img src="assets\rookBlack.png" /></td>
             </tr>
-            <tr className="chessboard" id="7">
-                <td className="chessboard" id="a7"><span>a7</span><img src="assets\pawnBlack.png" /></td>
-                <td className="chessboard" id="b7"><span>b7</span><img src="assets\pawnBlack.png" /></td>
-                <td className="chessboard" id="c7"><span>c7</span><img src="assets\pawnBlack.png" /></td>
-                <td className="chessboard" id="d7"><span>d7</span><img src="assets\pawnBlack.png" /></td>
-                <td className="chessboard" id="e7"><span>e7</span><img src="assets\pawnBlack.png" /></td>
-                <td className="chessboard" id="f7"><span>f7</span><img src="assets\pawnBlack.png" /></td>
-                <td className="chessboard" id="g7"><span>g7</span><img src="assets\pawnBlack.png" /></td>
-                <td className="chessboard" id="h7"><span>h7</span><img src="assets\pawnBlack.png" /></td>
+            <tr class="chessboard" id="7">
+                <td class="chessboard" id="a7"><span>a7</span><img src="assets\pawnBlack.png" /></td>
+                <td class="chessboard" id="b7"><span>b7</span><img src="assets\pawnBlack.png" /></td>
+                <td class="chessboard" id="c7"><span>c7</span><img src="assets\pawnBlack.png" /></td>
+                <td class="chessboard" id="d7"><span>d7</span><img src="assets\pawnBlack.png" /></td>
+                <td class="chessboard" id="e7"><span>e7</span><img src="assets\pawnBlack.png" /></td>
+                <td class="chessboard" id="f7"><span>f7</span><img src="assets\pawnBlack.png" /></td>
+                <td class="chessboard" id="g7"><span>g7</span><img src="assets\pawnBlack.png" /></td>
+                <td class="chessboard" id="h7"><span>h7</span><img src="assets\pawnBlack.png" /></td>
             </tr>
             <tr class="chessboard" id="6">
                 <td class="chessboard" id="a6"><span>a6</span></td>
