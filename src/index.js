@@ -4,8 +4,8 @@ import './index.css';
 import Chessboard from './chessboard'
 import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('chessboard'));
-root.render(
+const chessboard = ReactDOM.createRoot(document.getElementById('chessboard'));
+chessboard.render(
   <React.StrictMode>
     <Chessboard />
   </React.StrictMode>
