@@ -1,0 +1,32 @@
+table.chessboard {
+    margin: 20px auto;
+    background: #999;
+    border: 25px solid #333;
+    border-collapse: collapse; /* */
+}
+td.chessboard {
+    width: 64px; height: 64px;
+    border: 2px solid #333;
+    position: relative; /* Position the text absolutely within the td */
+    font-size: 300%;
+    text-align: center;
+}
+td.chessboard span {
+    position: absolute; /* Position the text absolutely within the td */
+    bottom: 1%; /* Adjust as needed */
+    left: 1%; /* Adjust as needed */
+    font-size: 10px; /* Adjust the font size */
+    font-weight: bold;
+}
+td.chessboard img {
+    width: auto;
+    height: 80%;
+}
+tr.chessboard:nth-child(even) td.chessboard:nth-child(even),
+tr.chessboard:nth-child(odd) td.chessboard:nth-child(odd) {
+    background: white;
+}
+tr.chessboard:nth-child(odd) td.chessboard:nth-child(even),
+tr.chessboard:nth-child(even) td.chessboard:nth-child(odd) {
+    color: white;
+}
