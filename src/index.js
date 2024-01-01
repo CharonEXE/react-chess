@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import Chessboard from './chessboard'
 import reportWebVitals from './reportWebVitals';
+import App from './App';
+import './index.css';
 
-const chessboard = ReactDOM.createRoot(document.getElementById('chessboard'));
-chessboard.render(
+const root = ReactDOM.createRoot(document.getElementById('app'));
+root.render(
   <React.StrictMode>
-    <Chessboard />
+    <App />
   </React.StrictMode>
 );
 
