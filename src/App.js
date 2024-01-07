@@ -1,6 +1,6 @@
-import Game from './engine';
+import ChessEngine from "./engine";
 
 export default function App(){
     return (
-        <Game /> );
+        <ChessEngine /> );
 }
