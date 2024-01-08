@@ -1,35 +1,58 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
+import CustomDialog from "./customDialog";
 
-export default function ChessEngine() {
-    const game = useMemo(() => new Chess(), []); // Use callback
-    const [gameAi, setGameAi] = useState(game); // For Stockfish to update
+export default function Game() {
+    const game = useMemo(() => new Chess(), []); 
+    const [over, setOver] = useState(null);
     const [showPromotionDialog, setShowPromotionDialog] = useState(false);
     const [fen, setFen] = useState(game.fen());
     const [squareStyle, setSquareStyle] = useState({});
     const [moveFrom, setMoveFrom] = useState(null);
     const [moveTo, setMoveTo] = useState(null);
 
+    function resetGame() {
+        try {
+            console.log("Game reseting.");
+            game.reset();
+            resetSelectedPiece();
+            resetSquareStyle();
+            setFen(game.fen());
+            return;
+        } catch (error) {
+            console.error("Error resetting game:", error);
+            return;
+        }
+
+    }
+
     // TODO: Stockfish can update the game thru this function
     // function safeGameMutate(modify) {
+    //     console.log(modify);
     //     setGame((g) => {
     //       const update = { ...g };
     //       modify(update);
     //       return update;
     //     });
-    //   }
+    // }
 
-
-    // const move = useCallback(
-    //     (moveData) => {
-    //         // try {
-    //             const result = game.move(moveData);
-    //         // } catch (error) {
-    //         //     return null;
-    //         // }
-    //     }
-    // );
+    const checkGameOver = useCallback(() => {
+        try {
+            if (game.isGameOver()) {
+                console.log(game);
+                if (game.isCheckmate()) {
+                  setOver(`Checkmate! ${game.turn() === "w" ? "black" : "white"} wins!`); 
+                } else if (game.isDraw()) {
+                  setOver("Draw"); 
+                } else {
+                  setOver("Game over");
+                }
+            }
+        } catch (error) {
+            return null;
+        }
+    }, [game]);
 
     function resetSquareStyle() {
         setSquareStyle({});
@@ -111,6 +134,7 @@ export default function ChessEngine() {
                 resetSquareStyle();
                 setMoveFrom(null);
                 setFen(game.fen());
+                checkGameOver();
                 return true;
             }
         }
@@ -138,6 +162,7 @@ export default function ChessEngine() {
         setMoveTo(null);
         setShowPromotionDialog(false);
         setFen(game.fen());
+        checkGameOver();
         return true;
     }
     
@@ -190,5 +215,18 @@ export default function ChessEngine() {
                 promotionToSquare={moveTo}
                 showPromotionDialog={showPromotionDialog}
             /> 
-        </div>);
+            <CustomDialog
+                open={Boolean(over)}
+                title={"Game Over"}
+                contentText={over}
+                handleRestart={() => {
+                    resetGame();
+                    setOver(null);
+                }}
+                handleContinue={() => {
+                    setOver(null);
+                }}
+            />
+        </div>
+        );
 }
