@@ -1,9 +1,11 @@
 import { useState, useMemo, useCallback } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
+import { Engine } from "./engine.js"
 import CustomDialog from "./customDialog";
 
 export default function Game() {
+    // const game = useMemo(() => new Chess("r1b1k1nr/1p2bpQp/p2qp3/8/8/2N2B2/PPP2PPP/R1B1K2R b KQkq - 0 12"), []); 
     const game = useMemo(() => new Chess(), []); 
     const [over, setOver] = useState(null);
     const [showPromotionDialog, setShowPromotionDialog] = useState(false);
@@ -11,6 +13,8 @@ export default function Game() {
     const [squareStyle, setSquareStyle] = useState({});
     const [moveFrom, setMoveFrom] = useState(null);
     const [moveTo, setMoveTo] = useState(null);
+
+    const engine = useMemo(() => new Engine(), []);
 
     function resetGame() {
         try {
@@ -42,9 +46,9 @@ export default function Game() {
             if (game.isGameOver()) {
                 console.log(game);
                 if (game.isCheckmate()) {
-                  setOver(`Checkmate! ${game.turn() === "w" ? "black" : "white"} wins!`); 
+                  setOver(`Checkmate!!! ${game.turn() === "w" ? "Black" : "White"} wins!`); 
                 } else if (game.isDraw()) {
-                  setOver("Draw"); 
+                  setOver("Stalemate! Draw"); 
                 } else {
                   setOver("Game over");
                 }
@@ -88,7 +92,20 @@ export default function Game() {
             verbose: true,
         });
 
+        const availableMoveFen = [];
+        availableMove.map((move) => {
+            let clonedGame = new Chess(game.fen());
+            clonedGame.move({
+                from: move.from,
+                to: move.to,
+            });
+            availableMoveFen.push(clonedGame.fen());
+            return move;
+        })
+        // console.log(availableMove);
+        // console.log(availableMoveFen);
         updateSquareStyle(square, availableMove);
+        engine.evalMoves(game.fen(), availableMove, availableMoveFen);
         return true;
     }
 
