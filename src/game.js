@@ -1,8 +1,41 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, forwardRef } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 import { Engine } from "./engine.js"
 import CustomDialog from "./customDialog";
+
+// const CustomSquareRenderer = forwardRef/*<HTMLDivElement, CustomSquareProps, score: []>*/((props, ref) => {
+const CustomSquareRenderer = forwardRef( function(props, ref) {
+    const { children, square, squareColor, style, score } = props;
+    console.log(`score = ${score}`);
+    return (
+    <div ref={ref} style={{ ...style, position: "relative" }}>
+        {children}
+        <div
+        style={{
+            position: "absolute",
+            left: 1,
+            top: 3,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: 12,
+            width: 22,
+            borderTopLeftRadius: 6,
+            // TODO: Change color according to score
+            backgroundColor: squareColor === "black" ? "#064e3b" : "#312e81",
+            color: "#fff",
+            fontSize: 10,
+        }}
+        >
+        {/* TODO Show the move score instead of square */}
+        {/* TODO Only for legal move for selected piece*/}
+        {score} 
+        </div>
+    </div>
+    );
+});
+
 
 export default function Game() {
     // const game = useMemo(() => new Chess("r1b1k1nr/1p2bpQp/p2qp3/8/8/2N2B2/PPP2PPP/R1B1K2R b KQkq - 0 12"), []); 
@@ -14,50 +47,13 @@ export default function Game() {
     const [moveFrom, setMoveFrom] = useState(null);
     const [moveTo, setMoveTo] = useState(null);
 
+    const [score, setScore] = useState(1.1);
+
     const engine = useMemo(() => new Engine(), []);
 
-    function resetGame() {
-        try {
-            console.log("Game reseting.");
-            game.reset();
-            resetSelectedPiece();
-            resetSquareStyle();
-            setFen(game.fen());
-            return;
-        } catch (error) {
-            console.error("Error resetting game:", error);
-            return;
-        }
+    
 
-    }
-
-    // TODO: Stockfish can update the game thru this function
-    // function safeGameMutate(modify) {
-    //     console.log(modify);
-    //     setGame((g) => {
-    //       const update = { ...g };
-    //       modify(update);
-    //       return update;
-    //     });
-    // }
-
-    const checkGameOver = useCallback(() => {
-        try {
-            if (game.isGameOver()) {
-                console.log(game);
-                if (game.isCheckmate()) {
-                  setOver(`Checkmate!!! ${game.turn() === "w" ? "Black" : "White"} wins!`); 
-                } else if (game.isDraw()) {
-                  setOver("Stalemate! Draw"); 
-                } else {
-                  setOver("Game over");
-                }
-            }
-        } catch (error) {
-            return null;
-        }
-    }, [game]);
-
+  
     function resetSquareStyle() {
         setSquareStyle({});
     }
@@ -86,6 +82,60 @@ export default function Game() {
         }
     }
 
+
+
+    function resetGame() {
+        try {
+            console.log("Game reseting.");
+            game.reset();
+            resetSelectedPiece();
+            resetSquareStyle();
+            setFen(game.fen());
+            return;
+        } catch (error) {
+            console.error("Error resetting game:", error);
+            return;
+        }
+
+    }
+
+    const checkGameOver = useCallback(() => {
+        try {
+            if (game.isGameOver()) {
+                console.log(game);
+                if (game.isCheckmate()) {
+                  setOver(`Checkmate!!! ${game.turn() === "w" ? "Black" : "White"} wins!`); 
+                } else if (game.isDraw()) {
+                  setOver("Stalemate! Draw"); 
+                } else {
+                  setOver("Game over");
+                }
+            }
+        } catch (error) {
+            return null;
+        }
+    }, [game]);
+
+
+
+    function resetSelectedPiece() {
+        setMoveFrom(null);
+        resetSquareStyle();
+    }
+
+    function updateSelectedPiece(square) {
+        // Do nothing if no chess pieces are currently selected and
+        // user clicked on empty square
+        if (!game.get(square)) {
+            return
+        }
+        setMoveFrom(square);
+        extractMoveOption(square);
+        return;
+    }
+
+
+
     function extractMoveOption(square) {
         const availableMove = game.moves({
             square,
@@ -109,21 +159,6 @@ export default function Game() {
         return true;
     }
 
-    function resetSelectedPiece() {
-        setMoveFrom(null);
-        resetSquareStyle();
-    }
-
-    function updateSelectedPiece(square) {
-        // Do nothing if no chess pieces are currently selected and
-        // user clicked on empty square
-        if (!game.get(square)) {
-            return
-        }
-        setMoveFrom(square);
-        extractMoveOption(square);
-        return;
-    }
 
     function validateMove(square) {
         const availableMove = game.moves({
@@ -165,6 +200,8 @@ export default function Game() {
             return false;
         }
     }
+
+
 
     function onPromotionPieceSelect(piece) {
         if (piece) {
@@ -222,6 +259,7 @@ export default function Game() {
     return (
         <div> 
             <Chessboard
+                customSquare={(props, ref) => <CustomSquareRenderer {...props} ref={ref} score={score} />}
                 customSquareStyles={squareStyle}
                 position={fen}
                 onPieceDragBegin={onPieceDragStart}

@@ -37,12 +37,7 @@ export class Engine {
             // Set up an event listener to handle the response from the worker.
             this.stockfish.addEventListener("message", handleMessageEval); 
 
-            const nextBestMove = await this.getBestMove(nextFen, 17);
-
-            // this.stockfish.postMessage(`ucinewgame`);
-
-            // console.log(`position fen ${currentFen} moves ${nextMove.from}${nextMove.to} ${nextBestMove}`);
-            // this.stockfish.postMessage(`position fen ${currentFen} moves ${nextMove.from}${nextMove.to} ${nextBestMove}`);
+            const nextBestMove = await this.getBestMove(nextFen, 10);
 
             console.log(`position fen ${nextFen} moves ${nextBestMove}`);
             this.stockfish.postMessage(`position fen ${nextFen} moves  ${nextBestMove}`);
@@ -51,9 +46,7 @@ export class Engine {
         })
     }
 
-    // TODO Complete this function
     getBestMove(fen, depth) {
-        // TODO Return bestMove
         return new Promise((resolve) => {
 
             const handleMessageBestMove = (event) => {
