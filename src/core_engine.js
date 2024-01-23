@@ -1,4 +1,4 @@
-export class Engine {
+export class AiEngine {
     constructor() {
         this.stockfish = new Worker("./stockfish.js");
 
@@ -7,31 +7,24 @@ export class Engine {
         this.stockfish.postMessage("isready");
     }
 
-    stop() {
-        this.stockfish.postMessage("stop"); // Run when changing positions
-    }
-    quit() {
-        this.stockfish.postMessage("quit"); // Good to run this before unmounting.
-    }
-
-
-    async evalMoves(currentFen, moves, fens) {
+    async evalMoves(moves, fens) {
+        const scores = {};
         for (let i = 0; i < moves.length; i++) {
-            await this.evalMove(currentFen, moves[i], fens[i]);
+            scores[moves[i].to] = await this.evalMove(fens[i]);
+            // console.log(`${moves[i].to}: ${scores[moves[i].to]}`);
         }
-        console.log("");
+        return scores;
     }
 
-    async evalMove(currentFen, nextMove, nextFen) {
+    async evalMove(nextFen) {
         return new Promise(async (resolve) => {
             
             // Define the Event Handler function
             const handleMessageEval = (event) => {
                 if (event["data"].includes("Total Evaluation")) {
                     const score = event["data"].slice(18).split(' (')[0];
-                    console.log(`${nextMove.to}: ${score}`);
                     this.stockfish.removeEventListener("message", handleMessageEval);
-                    resolve();
+                    resolve(score);
                 }
             };
             // Set up an event listener to handle the response from the worker.
@@ -39,10 +32,9 @@ export class Engine {
 
             const nextBestMove = await this.getBestMove(nextFen, 10);
 
-            console.log(`position fen ${nextFen} moves ${nextBestMove}`);
+            // console.log(`position fen ${nextFen} moves ${nextBestMove}`);
             this.stockfish.postMessage(`position fen ${nextFen} moves  ${nextBestMove}`);
             this.stockfish.postMessage("eval");
-
         })
     }
 

@@ -1,56 +1,57 @@
 import { useState, useMemo, useCallback, forwardRef } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
-import { Engine } from "./engine.js"
+import { AiEngine } from "./core_engine.js"
 import CustomDialog from "./customDialog";
-
-// const CustomSquareRenderer = forwardRef/*<HTMLDivElement, CustomSquareProps, score: []>*/((props, ref) => {
-const CustomSquareRenderer = forwardRef( function(props, ref) {
-    const { children, square, squareColor, style, score } = props;
-    console.log(`score = ${score}`);
-    return (
-    <div ref={ref} style={{ ...style, position: "relative" }}>
-        {children}
-        <div
-        style={{
-            position: "absolute",
-            left: 1,
-            top: 3,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: 12,
-            width: 22,
-            borderTopLeftRadius: 6,
-            // TODO: Change color according to score
-            backgroundColor: squareColor === "black" ? "#064e3b" : "#312e81",
-            color: "#fff",
-            fontSize: 10,
-        }}
-        >
-        {/* TODO Show the move score instead of square */}
-        {/* TODO Only for legal move for selected piece*/}
-        {score} 
-        </div>
-    </div>
-    );
-});
 
 
 export default function Game() {
-    // const game = useMemo(() => new Chess("r1b1k1nr/1p2bpQp/p2qp3/8/8/2N2B2/PPP2PPP/R1B1K2R b KQkq - 0 12"), []); 
     const game = useMemo(() => new Chess(), []); 
     const [over, setOver] = useState(null);
-    const [showPromotionDialog, setShowPromotionDialog] = useState(false);
     const [fen, setFen] = useState(game.fen());
-    const [squareStyle, setSquareStyle] = useState({});
     const [moveFrom, setMoveFrom] = useState(null);
     const [moveTo, setMoveTo] = useState(null);
 
-    const [score, setScore] = useState(1.1);
+    const [score, setScore] = useState({});
 
-    const engine = useMemo(() => new Engine(), []);
+    const aiEngine = useMemo(() => new AiEngine(), []);
 
+    const [squareStyle, setSquareStyle] = useState({});
+    const [showPromotionDialog, setShowPromotionDialog] = useState(false);
+    
+
+    const CustomSquareRenderer = (props, ref) => {
+        const { children, square, squareColor, style } = props;
+        var scoreStyle = null;
+        if (score[square]) {
+            scoreStyle = {
+                position: "absolute",
+                left: 1,
+                top: 3,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: 12,
+                width: 22,
+                borderTopLeftRadius: 6,
+                // TODO: Change color according to score
+                backgroundColor: squareColor === "black" ? "#064e3b" : "#312e81",
+                color: "#fff",
+                fontSize: 10,
+            };
+        }
+
+        return (
+        <div ref={ref} style={{ ...style, position: "relative" }}>
+            {children}
+            <div
+            style={scoreStyle}
+            >
+            {score[square]} 
+            </div>
+        </div>
+        );
+    };
     
 
   
@@ -121,6 +122,7 @@ export default function Game() {
     function resetSelectedPiece() {
         setMoveFrom(null);
         resetSquareStyle();
+        setScore({});
     }
 
     function updateSelectedPiece(square) {
@@ -136,7 +138,7 @@ export default function Game() {
 
 
 
-    function extractMoveOption(square) {
+    async function extractMoveOption(square) {
         const availableMove = game.moves({
             square,
             verbose: true,
@@ -155,7 +157,9 @@ export default function Game() {
         // console.log(availableMove);
         // console.log(availableMoveFen);
         updateSquareStyle(square, availableMove);
-        engine.evalMoves(game.fen(), availableMove, availableMoveFen);
+        const newScore = await aiEngine.evalMoves(availableMove, availableMoveFen);
+        setScore(newScore);
+        console.log(newScore);
         return true;
     }
 
@@ -185,6 +189,7 @@ export default function Game() {
             if (result) {
                 resetSquareStyle();
                 setMoveFrom(null);
+                setScore({});
                 setFen(game.fen());
                 checkGameOver();
                 return true;
@@ -259,7 +264,13 @@ export default function Game() {
     return (
         <div> 
             <Chessboard
-                customSquare={(props, ref) => <CustomSquareRenderer {...props} ref={ref} score={score} />}
+                customSquare={forwardRef((props,ref) => CustomSquareRenderer(
+                    {
+                        score: score,
+                        ...props
+                    },
+                    ref
+                ))}
                 customSquareStyles={squareStyle}
                 position={fen}
                 onPieceDragBegin={onPieceDragStart}
