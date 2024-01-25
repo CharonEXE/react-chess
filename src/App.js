@@ -1,29 +1,64 @@
+import { useState, useEffect, useMemo, useCallback, forwardRef } from "react";
 import { useMediaQuery } from "react-responsive"
+import './App.css'
 import Game from "./game";
 
 export default function App(){
-    const isMobileDevice = useMediaQuery({
-        query: "(min-device-width: 480px)",
-    });
+    // const [chessboardSize, setChessboardSize] = useState(undefined);
+    // const [selectedBoard, setSelectedBoard] = useState("PlayVsRandom");
+  
+    // useEffect(() => {
+    //   function handleResize() {
+    //     const display = document.getElementsByClassName("container")[0];
+    //     setChessboardSize(display.offsetWidth - 20);
+    //   }
+  
+    //   window.addEventListener("resize", handleResize);
+    //   handleResize();
+    //   return () => window.removeEventListener("resize", handleResize);
+    // }, []);
 
-    const isTabletDevice = useMediaQuery({
-        query: "(min-device-width: 768px)",
-    });
+    // const isMobileDevice = useMediaQuery({
+    //     query: "(min-device-width: 480px)",
+    // });
 
-    const isLaptop = useMediaQuery({
-        query: "(min-device-width: 1024px)",
-    });
+    // const isTabletDevice = useMediaQuery({
+    //     query: "(min-device-width: 768px)",
+    // });
 
-    const isDesktop = useMediaQuery({
-        query: "(min-device-width: 1200px)",
-    });
+    // const isLaptop = useMediaQuery({
+    //     query: "(min-device-width: 1024px)",
+    // });
 
-    const isBigScreen = useMediaQuery({
-        query: "(min-device-width: 1201px )",
-    });
+    // const isDesktop = useMediaQuery({
+    //     query: "(min-device-width: 1200px)",
+    // });
+
+    // const isBigScreen = useMediaQuery({
+    //     query: "(min-device-width: 1201px )",
+    // });
 
 
 
     return (
-        <Game /> );
+        <div className="container">
+            <div className="split-container">
+                <div className="split-row">
+                    <div className="split-column left-pane">
+                        <div id="evaluation" className="ai"></div>
+                    </div>
+                    <div className="split-column right-pane">
+                        <div className="chessgame">
+                            {}
+                            {}
+                            {}
+                            {}
+                            {}
+                            <Game />    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        );
 }
