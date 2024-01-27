@@ -12,19 +12,44 @@
     /* overflow: auto; */
 }
 .left-pane {
-    flex: 3;
+    flex: 4;
     background-color: #f0f0f0; /* Adjust background color as needed */
 }
 .right-pane {
-    flex: 7;
+    flex: 6;
     background-color: #e0e0e0; /* Adjust background color as needed */
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+.empty-container {
+    padding: 10vh;
+}
+
+.log-container {
+    padding: 25vh;
+}
+
+.main-button-container{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+button.main-button {
+    width: 15vw;
+    height: 7.5vh;
+    margin: 1vh 0.75vw 1vh;
+}
+
+
+
+
  div.chessgame {
-    
-    width: 80vh; height: 80vh;
+    width: 75vh; height: 75vh;
     border: 2px solid #333;
 } 
