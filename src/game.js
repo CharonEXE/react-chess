@@ -1,9 +1,10 @@
 import { useState, useMemo, useCallback, forwardRef } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
-import { AiEngine } from "./core_engine.js"
+import { AiEngine } from "./engineCore.js"
 import CustomDialog from "./customDialog";
 
+// TODO Break down the feature that we want to be here
 
 export default function Game() {
     const game = useMemo(() => new Chess(), []); 
