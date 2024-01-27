@@ -1,12 +1,12 @@
-import { useState, useMemo, useCallback, forwardRef } from "react";
+import { useState, useMemo, useCallback, forwardRef, useEffect } from "react";
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 import { AiEngine } from "./engineCore.js"
-import CustomDialog from "./customDialog";
+
 
 // TODO Break down the feature that we want to be here
 
-export default function Game() {
+export default function Game({ stateReset, onGameOver }) {
     const game = useMemo(() => new Chess(), []); 
     const [over, setOver] = useState(null);
     const [fen, setFen] = useState(game.fen());
@@ -20,6 +20,11 @@ export default function Game() {
     const [squareStyle, setSquareStyle] = useState({});
     const [showPromotionDialog, setShowPromotionDialog] = useState(false);
     
+    useEffect(() => {
+        if (stateReset) {
+            resetGame();
+        }
+    })
 
     const CustomSquareRenderer = (props, ref) => {
         const { children, square, squareColor, style } = props;
@@ -104,19 +109,18 @@ export default function Game() {
     const checkGameOver = useCallback(() => {
         try {
             if (game.isGameOver()) {
-                console.log(game);
                 if (game.isCheckmate()) {
-                  setOver(`Checkmate!!! ${game.turn() === "w" ? "Black" : "White"} wins!`); 
+                    onGameOver(`Checkmate!!! ${game.turn() === "w" ? "Black" : "White"} wins!`); 
                 } else if (game.isDraw()) {
-                  setOver("Stalemate! Draw"); 
+                    onGameOver("Stalemate! Draw"); 
                 } else {
-                  setOver("Game over");
+                    onGameOver("Game over");
                 }
             }
         } catch (error) {
             return null;
         }
-    }, [game]);
+    }, [game, onGameOver]);
 
 
 
@@ -160,7 +164,6 @@ export default function Game() {
         updateSquareStyle(square, availableMove);
         const newScore = await aiEngine.evalMoves(availableMove, availableMoveFen);
         setScore(newScore);
-        console.log(newScore);
         return true;
     }
 
@@ -282,18 +285,6 @@ export default function Game() {
                 promotionToSquare={moveTo}
                 showPromotionDialog={showPromotionDialog}
             /> 
-            <CustomDialog
-                open={Boolean(over)}
-                title={"Game Over"}
-                contentText={over}
-                handleRestart={() => {
-                    resetGame();
-                    setOver(null);
-                }}
-                handleContinue={() => {
-                    setOver(null);
-                }}
-            />
         </div>
         );
 }

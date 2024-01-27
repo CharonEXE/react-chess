@@ -1,7 +1,8 @@
-// import { useState, useEffect, useMemo, useCallback, forwardRef } from "react";
+import { useState, useEffect, useMemo, useCallback, forwardRef } from "react";
 // import { useMediaQuery } from "react-responsive"
 import './App.css'
 import Game from "./game";
+import CustomDialog from "./customDialog";
 
 export default function App(){
 
@@ -51,7 +52,37 @@ export default function App(){
 
     // <MainMenuBar>
 
+    const [stateReset, setStateReset] = useState(false);
+    const [stateOver, setStateOver] = useState(null);
 
+
+    useEffect(() => {
+        if (stateReset) {
+            setStateReset(false);
+        }
+    })
+
+    const onClickReset = () => {
+        if (!stateReset) {
+            setStateReset(true);
+        }
+    }
+
+    const onGameOver = (gameResult) => {
+        setStateOver(gameResult);
+    }
+
+    const checkGameOver = useCallback((valGameOver, valCheckMate, valTurn, valDraw) => {
+        if (valGameOver) {
+            if (valCheckMate) {
+                setStateOver(`Checkmate!!! ${valTurn === "w" ? "Black" : "White"} wins!`); 
+              } else if (valDraw) {
+                setStateOver("Stalemate! Draw"); 
+              } else {
+                setStateOver("Game over");
+              }
+        }
+    })
 
     return (
         <div className="container">
@@ -63,7 +94,7 @@ export default function App(){
                             <div className='main-log'></div>
                         </div>
                         <div className='main-button-container'>
-                            <button className='main-button'>Reset Game</button>
+                            <button className='main-button' onClick={onClickReset}>Reset Game</button>
                             <button className='main-button'>New VS Bot Game</button>
                         </div>
                         <div className='main-button-container'>
@@ -80,7 +111,21 @@ export default function App(){
                             {}
                             {}
                             {}
-                            <Game />    
+                            <Game 
+                                stateReset={stateReset}
+                                onGameOver={onGameOver}/>  
+                            <CustomDialog
+                                open={Boolean(stateOver)}
+                                title={"Game Over"}
+                                contentText={stateOver}
+                                handleRestart={() => {
+                                    onClickReset();
+                                    setStateOver(null);
+                                }}
+                                handleContinue={() => {
+                                    setStateOver(null);
+                                }}
+                            />  
                         </div>
                     </div>
                 </div>
