@@ -6,9 +6,8 @@ import { AiEngine } from "./engineCore.js"
 
 // TODO Break down the feature that we want to be here
 
-export default function Game({ stateReset, onGameOver }) {
+export default function Game({ stateResetting, onGameOver }) {
     const game = useMemo(() => new Chess(), []); 
-    const [over, setOver] = useState(null);
     const [fen, setFen] = useState(game.fen());
     const [moveFrom, setMoveFrom] = useState(null);
     const [moveTo, setMoveTo] = useState(null);
@@ -21,7 +20,7 @@ export default function Game({ stateReset, onGameOver }) {
     const [showPromotionDialog, setShowPromotionDialog] = useState(false);
     
     useEffect(() => {
-        if (stateReset) {
+        if (stateResetting) {
             resetGame();
         }
     })
@@ -131,8 +130,6 @@ export default function Game({ stateReset, onGameOver }) {
     }
 
     function updateSelectedPiece(square) {
-        // Do nothing if no chess pieces are currently selected and
-        // user clicked on empty square
         if (!game.get(square)) {
             return
         }
@@ -159,8 +156,6 @@ export default function Game({ stateReset, onGameOver }) {
             availableMoveFen.push(clonedGame.fen());
             return move;
         })
-        // console.log(availableMove);
-        // console.log(availableMoveFen);
         updateSquareStyle(square, availableMove);
         const newScore = await aiEngine.evalMoves(availableMove, availableMoveFen);
         setScore(newScore);

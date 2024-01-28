@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback, forwardRef } from "react";
+import { useState, useEffect/*, useMemo, useCallback, forwardRef*/ } from "react";
 // import { useMediaQuery } from "react-responsive"
 import './App.css'
 import Game from "./game";
@@ -52,37 +52,36 @@ export default function App(){
 
     // <MainMenuBar>
 
-    const [stateReset, setStateReset] = useState(false);
-    const [stateOver, setStateOver] = useState(null);
+    const [stateResetting, setStateResetting] = useState(false); // Signal to actually reset the game
+    const [stateOver, setStateOver] = useState(false);
+    const [stateReset, setStateReset] = useState(false); // State indicating reset request is made
 
+    const [dialogTitle, setDialogTitle] = useState(null);
+    const [dialogContent, setDialogContent] = useState(null);
 
     useEffect(() => {
-        if (stateReset) {
-            setStateReset(false);
+        if (stateResetting) {
+            setStateResetting(false);
         }
-    })
+    }, [stateResetting])
 
     const onClickReset = () => {
-        if (!stateReset) {
-            setStateReset(true);
+        setDialogTitle("Resetting Game");
+        setDialogContent("Game will be reset. Confirm to proceed.");
+        setStateReset(true);
+    }
+
+    const onGameReset = () => {
+        if (!stateResetting) {
+            setStateResetting(true);
         }
     }
 
     const onGameOver = (gameResult) => {
-        setStateOver(gameResult);
+        setDialogTitle("Game Over");
+        setDialogContent(gameResult);
+        setStateOver(true);
     }
-
-    const checkGameOver = useCallback((valGameOver, valCheckMate, valTurn, valDraw) => {
-        if (valGameOver) {
-            if (valCheckMate) {
-                setStateOver(`Checkmate!!! ${valTurn === "w" ? "Black" : "White"} wins!`); 
-              } else if (valDraw) {
-                setStateOver("Stalemate! Draw"); 
-              } else {
-                setStateOver("Game over");
-              }
-        }
-    })
 
     return (
         <div className="container">
@@ -106,24 +105,37 @@ export default function App(){
                     </div>
                     <div className="split-column right-pane">
                         <div className="chessgame">
-                            {}
-                            {}
-                            {}
-                            {}
-                            {}
                             <Game 
-                                stateReset={stateReset}
+                                stateResetting={stateResetting}
                                 onGameOver={onGameOver}/>  
                             <CustomDialog
-                                open={Boolean(stateOver)}
-                                title={"Game Over"}
-                                contentText={stateOver}
-                                handleRestart={() => {
-                                    onClickReset();
-                                    setStateOver(null);
+                                stateOver={stateOver}
+                                open={stateOver}
+                                title={dialogTitle}
+                                contentText={dialogContent}
+                                handlePositive={() => {
+                                    onGameReset();
+                                    setDialogContent(null);
+                                    setStateOver(false);
                                 }}
-                                handleContinue={() => {
-                                    setStateOver(null);
+                                handleNegative={() => {
+                                    setDialogContent(null);
+                                    setStateOver(false);
+                                }}
+                            />  
+                            <CustomDialog
+                                stateReset={stateReset}
+                                open={stateReset}
+                                title={dialogTitle}
+                                contentText={dialogContent}
+                                handlePositive={() => {
+                                    onGameReset();
+                                    setDialogContent(null);
+                                    setStateReset(false);
+                                }}
+                                handleNegative={() => {
+                                    setDialogContent(null);
+                                    setStateReset(false);
                                 }}
                             />  
                         </div>

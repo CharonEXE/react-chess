@@ -5,22 +5,34 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
-export default function CustomDialog({ open, children, title, contentText, handleRestart, handleContinue }) {
+export default function CustomDialog(props) {
+  const { open, title, contentText, 
+    handlePositive, handleNegative, 
+    stateOver, stateReset 
+  } = props;
+
+  // TODO Make this a generic custom dialog
+  // TODO Add in feature for confirm reset game(done), confirm play bot
   return (
-    <Dialog open={open}> {/*dialog container*/}
+    <Dialog open={open}>
         <DialogTitle>{title}</DialogTitle>
-        <DialogContent> {/* Main body of modal/dialog */}
-            <DialogContentText> {/* main text */}
+        <DialogContent>
+            <DialogContentText>
                 {contentText}
             </DialogContentText>
-                {children} {/* Other content */}
         </DialogContent>
-        <DialogActions> {/* Dialog action buttons */}
-            {/* Force users to make input without option to cancel */}
-            {/* <Button onClick={handleClose}>Cancel</Button> */}
-            <Button onClick={handleRestart}>Restart</Button>
-            <Button onClick={handleContinue}>Continue</Button>
+        {stateOver &&
+          <DialogActions>
+            <Button onClick={handlePositive}>Restart</Button>
+            <Button onClick={handleNegative}>Cancel</Button>
+          </DialogActions>
+        }
+        {stateReset &&
+          <DialogActions>
+            <Button onClick={handlePositive}>Yes</Button>
+            <Button onClick={handleNegative}>No</Button>
         </DialogActions>
+        }
     </Dialog>
   );
 }
