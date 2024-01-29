@@ -6,9 +6,11 @@ import { AiEngine } from "./engineCore.js"
 
 // TODO Break down the feature that we want to be here
 
-export default function Game({ stateResetting, onGameOver }) {
+export default function Game({ stateResetting, onGameOver, updateHistory }) {
     const game = useMemo(() => new Chess(), []); 
     const [fen, setFen] = useState(game.fen());
+    const [history, setHistory] = useState(game.history());
+
     const [moveFrom, setMoveFrom] = useState(null);
     const [moveTo, setMoveTo] = useState(null);
 
@@ -24,6 +26,10 @@ export default function Game({ stateResetting, onGameOver }) {
             resetGame();
         }
     })
+
+    useEffect(() => {
+        updateHistory(history);
+    }, [history, updateHistory])
 
     const CustomSquareRenderer = (props, ref) => {
         const { children, square, squareColor, style } = props;
@@ -185,6 +191,7 @@ export default function Game({ stateResetting, onGameOver }) {
                 from: moveFrom,
                 to: square,
             });
+            setHistory(game.history());
             if (result) {
                 resetSquareStyle();
                 setMoveFrom(null);
@@ -206,7 +213,6 @@ export default function Game({ stateResetting, onGameOver }) {
     }
 
 
-
     function onPromotionPieceSelect(piece) {
         if (piece) {
             game.move({
@@ -214,6 +220,7 @@ export default function Game({ stateResetting, onGameOver }) {
                 to: moveTo,
                 promotion: piece[1].toLowerCase() ?? "q", 
             });
+            setHistory(game.history());
         }
 
         resetSelectedPiece();

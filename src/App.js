@@ -56,6 +56,8 @@ export default function App(){
     const [stateOver, setStateOver] = useState(false);
     const [stateReset, setStateReset] = useState(false); // State indicating reset request is made
 
+    const [history, setHistory] = useState([]);
+
     const [dialogTitle, setDialogTitle] = useState(null);
     const [dialogContent, setDialogContent] = useState(null);
 
@@ -65,15 +67,24 @@ export default function App(){
         }
     }, [stateResetting])
 
+    useEffect(() => {
+        console.log(history);
+    }, [history])
+
     const onClickReset = () => {
         setDialogTitle("Resetting Game");
         setDialogContent("Game will be reset. Confirm to proceed.");
         setStateReset(true);
     }
 
+    const updateHistory = (gameHistory) => {
+        setHistory(gameHistory);
+    }
+
     const onGameReset = () => {
         if (!stateResetting) {
             setStateResetting(true);
+            setHistory([]);
         }
     }
 
@@ -101,13 +112,14 @@ export default function App(){
                             <button className='main-button'>History</button>
                         </div>
 
-                        <div id="evaluation" className="ai"></div>
                     </div>
                     <div className="split-column right-pane">
+                        <div id="evaluator" className="ai"></div>
                         <div className="chessgame">
                             <Game 
                                 stateResetting={stateResetting}
-                                onGameOver={onGameOver}/>  
+                                onGameOver={onGameOver}  
+                                updateHistory={updateHistory} />
                             <CustomDialog
                                 stateOver={stateOver}
                                 open={stateOver}
