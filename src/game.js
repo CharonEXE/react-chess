@@ -103,6 +103,7 @@ export default function Game({ stateResetting, onGameOver, updateHistory }) {
             resetSelectedPiece();
             resetSquareStyle();
             setFen(game.fen());
+            setHistory(game.history());
             return;
         } catch (error) {
             console.error("Error resetting game:", error);
