@@ -2,6 +2,7 @@ import { useState, useEffect/*, useMemo, useCallback, forwardRef*/ } from "react
 // import { useMediaQuery } from "react-responsive"
 import './App.css'
 import Game from "./game";
+import MoveHistoryLogger from "./moveHistoryLogger";
 import CustomDialog from "./customDialog";
 
 export default function App(){
@@ -56,7 +57,7 @@ export default function App(){
     const [stateOver, setStateOver] = useState(false);
     const [stateReset, setStateReset] = useState(false); // State indicating reset request is made
 
-    const [history, setHistory] = useState([]);
+    const [history, setHistory] = useState(null);
 
     const [dialogTitle, setDialogTitle] = useState(null);
     const [dialogContent, setDialogContent] = useState(null);
@@ -68,7 +69,10 @@ export default function App(){
     }, [stateResetting])
 
     useEffect(() => {
-        console.log(history);
+        if(history !== null)
+        {
+            console.log(history);
+        }
     }, [history])
 
     const onClickReset = () => {
@@ -84,7 +88,7 @@ export default function App(){
     const onGameReset = () => {
         if (!stateResetting) {
             setStateResetting(true);
-            setHistory([]);
+            setHistory(null);
         }
     }
 
@@ -100,8 +104,29 @@ export default function App(){
                 <div className="split-row">
                     <div className="split-column left-pane">
                         <div className='empty-container'></div>
-                        <div className='log-container'>
-                            <div className='main-log'></div>
+                        <div className="log-container">
+                            <div className='log-header-container'>
+                                <div className="log-header">
+                                    <table style={{ width: '100%'}}>
+                                        <thead>
+                                            <tr>
+                                            <th>Move</th>
+                                            <th>White</th>
+                                            <th>Black</th>
+                                            <th style={{ padding:"0px 7.5px 0px 7.5px"}}></th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                            <div className='log-body-container'>
+                                <div className="log">
+                                    <div className="MoveHistoryLogger">
+                                        <MoveHistoryLogger
+                                            moveHistory={history}/>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div className='main-button-container'>
                             <button className='main-button' onClick={onClickReset}>Reset Game</button>
